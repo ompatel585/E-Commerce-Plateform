@@ -138,9 +138,11 @@ const cors = require("cors");
 const path = require("path");
 const dotenv = require("dotenv");
 
+dotenv.config();
+
 const authRouter = require("./routes/auth/auth-routes");
 const adminProductsRouter = require("./routes/admin/products-routes");
-const adminOrderRouter = require("./routes/admin/order-routes.js");
+const adminOrderRouter = require("./routes/admin/order-routes");
 
 const shopProductsRouter = require("./routes/shop/product-routes");
 const shopCartRouter = require("./routes/shop/cart-routes");
@@ -150,8 +152,7 @@ const shopSearchRouter = require("./routes/shop/search-routes");
 const shopReviewRouter = require("./routes/shop/review-routes");
 const commonFeatureRouter = require("./routes/common/feature-routes");
 
-dotenv.config();
-
+// Connect to MongoDB
 mongoose
     .connect(process.env.MONGO_URI)
     .then(() => console.log("MONGODB Connected successfully"))
@@ -160,30 +161,27 @@ mongoose
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-// CORS setup with dynamic origin based on environment
-const allowedOrigins = process.env.NODE_ENV === "production"
-    ? ["https://e-commerce-plateform.onrender.com"] // <-- Your deployed frontend URL here
-    : ["http://localhost:5173"];
+// Set allowed origins dynamically
+const allowedOrigins = [
+    "http://localhost:5173",                // Local dev frontend
+    "https://e-commerce-plateform.onrender.com"  // Your deployed frontend URL
+];
 
 app.use(
     cors({
         origin: function (origin, callback) {
-            // allow requests with no origin (like mobile apps or curl requests)
+            // Allow requests with no origin (like Postman, mobile apps)
             if (!origin) return callback(null, true);
+
             if (allowedOrigins.indexOf(origin) === -1) {
-                const msg = `The CORS policy for this site does not allow access from the specified Origin: ${origin}`;
+                const msg = `CORS error: Origin ${origin} not allowed`;
                 return callback(new Error(msg), false);
             }
+
             return callback(null, true);
         },
-        methods: ["GET", "POST", "DELETE", "PUT"],
-        allowedHeaders: [
-            "Content-Type",
-            "Authorization",
-            "Cache-Control",
-            "Expires",
-            "Pragma",
-        ],
+        methods: ["GET", "POST", "PUT", "DELETE"],
+        allowedHeaders: ["Content-Type", "Authorization", "Cache-Control", "Expires", "Pragma"],
         credentials: true,
     })
 );
@@ -208,12 +206,11 @@ app.use("/api/common/feature", commonFeatureRouter);
 // Serve frontend static files
 app.use(express.static(path.join(__dirname, "../client/dist")));
 
-// Handle React routing, return all non-API routes to React app
+// React frontend routing fallback (ignore API routes)
 app.get(/^\/(?!api).*/, (req, res) => {
-    res.sendFile(path.join(__dirname, "../client", "dist", "index.html"));
+    res.sendFile(path.join(__dirname, "../client/dist/index.html"));
 });
 
 app.listen(PORT, () => {
-    console.log("Server is running on port ", PORT);
-    console.log(`Visit the server on http://localhost:${PORT}`);
+    console.log(`Server running on port ${PORT}`);
 });
