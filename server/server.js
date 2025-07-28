@@ -58,8 +58,6 @@
 // });
 
 
-process.env.DEBUG = "";  // Disable DEBUG env variable that breaks path-to-regexp on Render
-
 
 const express = require("express");
 const mongoose = require("mongoose");
@@ -121,10 +119,10 @@ app.use("/api/common/feature", commonFeatureRouter);
 // ✅ Serve frontend static files
 app.use(express.static(path.join(__dirname, "../client/dist")));
 
-// ✅ Handle all non-API routes with React frontend
-app.get("*", (req, res) => {
+app.get(/^\/(?!api).*/, (req, res) => {
     res.sendFile(path.join(__dirname, "../client", "dist", "index.html"));
 });
+
 
 app.listen(PORT, () => {
     console.log("Server is running on port ", PORT);
