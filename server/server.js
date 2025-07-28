@@ -58,6 +58,9 @@
 // });
 
 
+process.env.DEBUG = "";  // Disable DEBUG env variable that breaks path-to-regexp on Render
+
+
 const express = require("express");
 const mongoose = require("mongoose");
 const cookieParser = require("cookie-parser");
@@ -111,7 +114,6 @@ app.use("/api/shop/order", shopOrderRouter);
 app.use("/api/shop/search", shopSearchRouter);
 app.use("/api/shop/review", shopReviewRouter);
 
-process.env.DEBUG = "";  // Disable DEBUG env variable that breaks path-to-regexp on Render
 
 
 app.use("/api/common/feature", commonFeatureRouter);
