@@ -59,14 +59,11 @@
 
 
 
-
 import path from "path";
 import { fileURLToPath } from "url";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-
-
 
 import express from "express";
 import mongoose from "mongoose";
@@ -77,7 +74,6 @@ import dotenv from "dotenv";
 import authRouter from "./routes/auth/auth-routes.js";
 import adminProductsRouter from "./routes/admin/products-routes.js";
 import adminOrderRouter from "./routes/admin/order-routes.js";
-
 import shopProductsRouter from "./routes/shop/product-routes.js";
 import shopCartRouter from "./routes/shop/cart-routes.js";
 import shopAddressRouter from "./routes/shop/address-routes.js";
@@ -88,50 +84,60 @@ import commonFeatureRouter from "./routes/common/feature-routes.js";
 
 dotenv.config();
 
-//const __dirname = path.resolve();
-
+// Connect to MongoDB
 mongoose.connect(process.env.MONGO_URI)
-    .then(() => console.log("MONGODB Connected successfully"))
+    .then(() => console.log("MongoDB Connected successfully"))
     .catch(err => console.error("MongoDB connection error:", err));
 
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-// if (process.env.NODE_ENV !== "production") {
-    app.use(cors({
-        origin: "https://e-commerce-plateform.onrender.com" || process.env.CLIENT_ORIGIN || "http://localhost:5173",
-        credentials: true,
-    }));
-// }
+// Configure CORS for all environments
+app.use(cors({
+    origin: process.env.CLIENT_ORIGIN || "https://e-commerce-plateform.onrender.com",
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization']
+}));
 
 app.use(cookieParser());
 app.use(express.json());
 
+// API Routes
 app.use('/api/auth', authRouter);
 app.use('/api/admin/products', adminProductsRouter);
 app.use("/api/admin/orders", adminOrderRouter);
-
 app.use("/api/shop/products", shopProductsRouter);
 app.use("/api/shop/cart", shopCartRouter);
 app.use('/api/shop/address', shopAddressRouter);
 app.use("/api/shop/order", shopOrderRouter);
 app.use("/api/shop/search", shopSearchRouter);
 app.use("/api/shop/review", shopReviewRouter);
-
 app.use("/api/common/feature", commonFeatureRouter);
 
+// Serve static files in production
 if (process.env.NODE_ENV === "production") {
-    app.use(express.static(path.join(__dirname, "../client/dist")));
+    app.use(express.static(path.join(__dirname, "../client/dist"), {
+        setHeaders: (res, filePath) => {
+            if (filePath.endsWith('.js')) {
+                res.setHeader('Content-Type', 'application/javascript');
+            }
+        }
+    }));
 
-    console.log("Adding catch-all route for production");
+    // Catch-all route for client-side routing
     app.get(/^\/(?!api\/).*/, (req, res) => {
-
-        res.sendFile(path.join(__dirname, "../client", "dist", "index.html"));
+        res.sendFile(path.join(__dirname, "../client/dist", "index.html"), (err) => {
+            if (err) {
+                console.error("Error sending index.html:", err);
+                res.status(500).send("Server Error");
+            }
+        });
     });
 }
 
-
+// Start server
 app.listen(PORT, () => {
-    console.log("Server is running on port", PORT);
-    console.log(`Visit the server on http://localhost:${PORT}`);
+    console.log(`Server is running on port ${PORT}`);
+    console.log(`Visit the server at ${process.env.CLIENT_ORIGIN || `http://localhost:${PORT}`}`);
 });

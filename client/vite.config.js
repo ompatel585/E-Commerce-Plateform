@@ -7,6 +7,15 @@ import tailwindcss from "@tailwindcss/vite"
 export default defineConfig({
   plugins: [react(), tailwindcss()],
   base: "./", // this is important for correct asset paths on Render
+  server: {
+    proxy: {
+      '/api': {
+        target: 'https://e-commerce-plateform.onrender.com',
+        changeOrigin: true,
+        secure: true
+      }
+    }
+  },
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),
