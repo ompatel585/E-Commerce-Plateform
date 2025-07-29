@@ -1,13 +1,28 @@
-const express = require("express");
+// const express = require("express");
 
-const {
+// const {
+//     addProductReview,
+//     getProductReviews,
+// } = require("../../controllers/shop/product-review-controller");
+
+// const router = express.Router();
+
+// router.post("/add", addProductReview);
+// router.get("/:productId", getProductReviews);
+
+// module.exports = router;
+
+
+import express from "express";
+
+import {
     addProductReview,
     getProductReviews,
-} = require("../../controllers/shop/product-review-controller");
+} from "../../controllers/shop/product-review-controller.js"; // add .js extension
 
 const router = express.Router();
 
 router.post("/add", addProductReview);
 router.get("/:productId", getProductReviews);
 
-module.exports = router;
+export default router;

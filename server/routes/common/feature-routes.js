@@ -1,13 +1,27 @@
-const express = require("express");
+// const express = require("express");
 
-const {
+// const {
+//     addFeatureImage,
+//     getFeatureImages,
+// } = require("../../controllers/common/feature-controller");
+
+// const router = express.Router();
+
+// router.post("/add", addFeatureImage);
+// router.get("/get", getFeatureImages);
+
+// module.exports = router;
+
+import express from "express";
+
+import {
     addFeatureImage,
     getFeatureImages,
-} = require("../../controllers/common/feature-controller");
+} from "../../controllers/common/feature-controller.js"; // add .js extension
 
 const router = express.Router();
 
 router.post("/add", addFeatureImage);
 router.get("/get", getFeatureImages);
 
-module.exports = router;
+export default router;

@@ -1,11 +1,30 @@
-const express = require("express");
+// const express = require("express");
 
-const {
+// const {
+//     addAddress,
+//     fetchAllAddress,
+//     editAddress,
+//     deleteAddress,
+// } = require("../../controllers/shop/address-controller");
+
+// const router = express.Router();
+
+// router.post("/add", addAddress);
+// router.get("/get/:userId", fetchAllAddress);
+// router.delete("/delete/:userId/:addressId", deleteAddress);
+// router.put("/update/:userId/:addressId", editAddress);
+
+// module.exports = router;
+
+
+import express from "express";
+
+import {
     addAddress,
     fetchAllAddress,
     editAddress,
     deleteAddress,
-} = require("../../controllers/shop/address-controller");
+} from "../../controllers/shop/address-controller.js"; // add .js extension
 
 const router = express.Router();
 
@@ -14,4 +33,4 @@ router.get("/get/:userId", fetchAllAddress);
 router.delete("/delete/:userId/:addressId", deleteAddress);
 router.put("/update/:userId/:addressId", editAddress);
 
-module.exports = router;
+export default router;
