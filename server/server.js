@@ -124,10 +124,14 @@ if (process.env.NODE_ENV === "production") {
     app.use(express.static(path.join(__dirname, "../client/dist")));
 
     console.log("Adding catch-all route for production");
-    app.get(/^\/(?!api\/).*/, (req, res) => {
-
+    // This will skip API and static asset paths
+    app.get("*", (req, res) => {
+        if (req.path.startsWith("/api") || req.path.startsWith("/assets")) {
+            return; // Let Express handle it as normal
+        }
         res.sendFile(path.join(__dirname, "../client", "dist", "index.html"));
     });
+
 }
 
 
