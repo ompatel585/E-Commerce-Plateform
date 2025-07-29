@@ -60,8 +60,20 @@
 
 
 
-
 import path from "path";
+import { fileURLToPath } from "url";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+
+
+
+
+
+
+
+
 import express from "express";
 import mongoose from "mongoose";
 import cookieParser from "cookie-parser";
@@ -82,7 +94,7 @@ import commonFeatureRouter from "./routes/common/feature-routes.js";
 
 dotenv.config();
 
-const __dirname = path.resolve();
+//const __dirname = path.resolve();
 
 mongoose.connect(process.env.MONGO_URI)
     .then(() => console.log("MONGODB Connected successfully"))
