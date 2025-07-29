@@ -124,7 +124,8 @@ if (process.env.NODE_ENV === "production") {
     app.use(express.static(path.join(__dirname, "../client/dist")));
 
     console.log("Adding catch-all route for production");
-    app.get(/^\/(?!api).*/, (req, res) => {
+    app.get(/^\/(?!api\/).*/, (req, res) => {
+
         res.sendFile(path.join(__dirname, "../client", "dist", "index.html"));
     });
 }
